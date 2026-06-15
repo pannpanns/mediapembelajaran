@@ -1051,11 +1051,48 @@
       }
 
       .video-wrapper video,
-      .video-wrapper iframe {
+      .video-wrapper iframe,
+      .youtube-player-shell {
         width: 100%;
         height: 100%;
         display: block;
         border: 0;
+      }
+
+      .youtube-player-shell iframe {
+        width: 100%;
+        height: 100%;
+        display: block;
+        border: 0;
+      }
+
+      .youtube-preload-host {
+        position: fixed;
+        left: -9999px;
+        top: -9999px;
+        width: 2px;
+        height: 2px;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .youtube-loading {
+        width: 100%;
+        height: 100%;
+        min-height: 180px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        padding: 20px;
+
+        background: #172126;
+        color: white;
+
+        font-weight: 700;
+        text-align: center;
       }
 
       .back-choice-button {
@@ -2070,6 +2107,8 @@
       }
 
       function tampilkanPertanyaan(jenis) {
+        sembunyikanPlayerYoutube();
+
         const stage = document.getElementById("contentStage");
 
         const item = pengantar[jenis];
@@ -2107,6 +2146,8 @@
       }
 
       function tampilkanJawaban(jenis) {
+        sembunyikanPlayerYoutube();
+
         const stage = document.getElementById("contentStage");
         const item = pengantar[jenis];
 
@@ -2165,6 +2206,8 @@
       }
 
       function tampilkanJawabanTeks(jenis) {
+        sembunyikanPlayerYoutube();
+
         const stage = document.getElementById("contentStage");
         const item = pengantar[jenis];
 
@@ -2205,7 +2248,21 @@
       `;
       }
 
-      function buatEmbedYoutube(url) {
+      /*
+        Pemutar YouTube dipersiapkan sejak halaman dibuka.
+
+        Saat siswa menekan tombol "Menonton Video", klik tersebut
+        langsung menjalankan unMute(), mengatur volume ke 100,
+        dan memutar video secara inline. Dengan begitu siswa tidak
+        perlu membuka mode layar penuh atau menyalakan suara sendiri.
+      */
+
+      let youtubePlayer = null;
+      let youtubePlayerSiap = false;
+      let youtubePlayerShell = null;
+      let youtubePreloadHost = null;
+
+      function ambilIdYoutube(url) {
         try {
           const alamat = new URL(url);
           let videoId = "";
@@ -2220,24 +2277,228 @@
             videoId = alamat.searchParams.get("v") || "";
           }
 
-          if (!videoId) {
-            return "";
-          }
-
-          return (
-            "https://www.youtube-nocookie.com/embed/" +
-            videoId +
-            "?autoplay=1&rel=0&playsinline=1&modestbranding=1"
-          );
+          return videoId;
         } catch (error) {
           return "";
         }
       }
 
+      function buatTempatPlayerYoutube() {
+        if (youtubePreloadHost) {
+          return;
+        }
+
+        youtubePreloadHost = document.createElement("div");
+        youtubePreloadHost.id = "youtubePreloadHost";
+        youtubePreloadHost.className = "youtube-preload-host";
+
+        youtubePlayerShell = document.createElement("div");
+        youtubePlayerShell.id = "youtubePlayerShell";
+        youtubePlayerShell.className = "youtube-player-shell";
+
+        const playerElement = document.createElement("div");
+        playerElement.id = "youtubeSharedPlayer";
+
+        youtubePlayerShell.appendChild(playerElement);
+        youtubePreloadHost.appendChild(youtubePlayerShell);
+        document.body.appendChild(youtubePreloadHost);
+      }
+
+      function siapkanYoutubePlayer() {
+        if (
+          youtubePlayer ||
+          !window.YT ||
+          typeof window.YT.Player !== "function"
+        ) {
+          return;
+        }
+
+        buatTempatPlayerYoutube();
+
+        const videoAwal =
+          ambilIdYoutube(pengantar.alam.video) ||
+          "DTvc8UKYqtk";
+
+        youtubePlayer = new YT.Player("youtubeSharedPlayer", {
+          width: "100%",
+          height: "100%",
+          videoId: videoAwal,
+
+          playerVars: {
+            autoplay: 0,
+            controls: 1,
+            playsinline: 1,
+            rel: 0,
+            modestbranding: 1,
+            fs: 1,
+          },
+
+          events: {
+            onReady: function (event) {
+              youtubePlayerSiap = true;
+
+              event.target.setVolume(100);
+              event.target.unMute();
+            },
+          },
+        });
+      }
+
+      function muatYoutubeIframeAPI() {
+        buatTempatPlayerYoutube();
+
+        if (
+          window.YT &&
+          typeof window.YT.Player === "function"
+        ) {
+          siapkanYoutubePlayer();
+          return;
+        }
+
+        if (!document.getElementById("youtubeIframeApi")) {
+          const script = document.createElement("script");
+
+          script.id = "youtubeIframeApi";
+          script.src = "https://www.youtube.com/iframe_api";
+          script.async = true;
+
+          document.head.appendChild(script);
+        }
+
+        const callbackLama =
+          window.onYouTubeIframeAPIReady;
+
+        window.onYouTubeIframeAPIReady = function () {
+          if (typeof callbackLama === "function") {
+            callbackLama();
+          }
+
+          siapkanYoutubePlayer();
+        };
+      }
+
+      function pindahkanPlayerYoutube(target) {
+        if (
+          !target ||
+          !youtubePlayerShell
+        ) {
+          return;
+        }
+
+        target.innerHTML = "";
+        target.appendChild(youtubePlayerShell);
+      }
+
+      function sembunyikanPlayerYoutube() {
+        if (youtubePlayer) {
+          try {
+            youtubePlayer.stopVideo();
+          } catch (error) {
+            /* Player mungkin belum sepenuhnya siap. */
+          }
+        }
+
+        if (
+          youtubePreloadHost &&
+          youtubePlayerShell &&
+          youtubePlayerShell.parentElement !== youtubePreloadHost
+        ) {
+          youtubePreloadHost.appendChild(
+            youtubePlayerShell
+          );
+        }
+      }
+
+      function putarYoutubeDenganSuara(
+        url,
+        targetId
+      ) {
+        const target =
+          document.getElementById(targetId);
+
+        if (!target) {
+          return;
+        }
+
+        const videoId =
+          ambilIdYoutube(url);
+
+        if (!videoId) {
+          target.innerHTML = `
+            <div class="youtube-loading">
+              Link video YouTube tidak valid.
+            </div>
+          `;
+          return;
+        }
+
+        if (
+          !youtubePlayerSiap ||
+          !youtubePlayer
+        ) {
+          target.innerHTML = `
+            <div class="youtube-loading">
+              Pemutar video sedang disiapkan...
+            </div>
+          `;
+
+          /*
+            API biasanya sudah siap sebelum siswa sampai ke bagian
+            video. Jika belum, lakukan percobaan singkat kembali.
+          */
+          let percobaan = 0;
+
+          const tungguPlayer =
+            window.setInterval(function () {
+              percobaan++;
+
+              if (
+                youtubePlayerSiap &&
+                youtubePlayer
+              ) {
+                window.clearInterval(
+                  tungguPlayer
+                );
+
+                pindahkanPlayerYoutube(target);
+
+                youtubePlayer.unMute();
+                youtubePlayer.setVolume(100);
+                youtubePlayer.loadVideoById(videoId);
+                youtubePlayer.playVideo();
+              }
+
+              if (percobaan >= 30) {
+                window.clearInterval(
+                  tungguPlayer
+                );
+              }
+            }, 100);
+
+          return;
+        }
+
+        /*
+          Semua perintah ini dijalankan langsung dari klik siswa.
+          Hal ini membuat pemutaran bersuara jauh lebih kompatibel
+          pada browser HP dibanding membuat iframe baru setelah klik.
+        */
+        pindahkanPlayerYoutube(target);
+
+        youtubePlayer.unMute();
+        youtubePlayer.setVolume(100);
+        youtubePlayer.loadVideoById(videoId);
+        youtubePlayer.playVideo();
+      }
+
       function tampilkanJawabanVideo(jenis) {
-        const stage = document.getElementById("contentStage");
-        const item = pengantar[jenis];
-        const embedUrl = buatEmbedYoutube(item.video);
+        const stage =
+          document.getElementById("contentStage");
+
+        const item =
+          pengantar[jenis];
+
+        sembunyikanPlayerYoutube();
 
         stage.innerHTML = `
         <div class="intro-box answer-box stage-enter">
@@ -2252,20 +2513,14 @@
 
           <h2>${item.pertanyaan}</h2>
 
-          <div class="video-wrapper">
-            <iframe
-              id="introYoutube"
-              src="${embedUrl}"
-              title="Video pembelajaran ${item.pertanyaan}"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allowfullscreen
-            ></iframe>
-          </div>
+          <div
+            class="video-wrapper"
+            id="introYoutubeTarget"
+          ></div>
 
           <p class="intro-video-caption">
-            Setelah selesai menonton, tekan tombol lanjut
-            untuk membuka kartu materi.
+            Video diputar langsung dengan suara.
+            Setelah selesai menonton, tekan tombol lanjut.
           </p>
 
           <div class="intro-action-row">
@@ -2288,15 +2543,24 @@
 
         </div>
       `;
+
+        putarYoutubeDenganSuara(
+          item.video,
+          "introYoutubeTarget"
+        );
       }
 
       function selesaikanPengantar(jenis) {
+        sembunyikanPlayerYoutube();
+
         pengantarSelesai[jenis] = true;
 
         tampilkanKartu(jenis);
       }
 
       function tampilkanKartu(jenis) {
+        sembunyikanPlayerYoutube();
+
         const stage = document.getElementById("contentStage");
 
         const daftar = dataMateri[jenis];
@@ -2386,6 +2650,8 @@
       }
 
       function bukaPilihanBelajar(jenis, id) {
+        sembunyikanPlayerYoutube();
+
         const item = cariMateri(jenis, id);
 
         materiModalAktif = {
@@ -2580,9 +2846,11 @@
           materiModalAktif.id
         );
 
-        const embedUrl = buatEmbedYoutube(item.video);
+        sembunyikanPlayerYoutube();
 
-        document.getElementById("materialModalBody").innerHTML = `
+        document.getElementById(
+          "materialModalBody"
+        ).innerHTML = `
         <div class="video-content">
 
           <p>
@@ -2591,16 +2859,10 @@
             berikut ini.
           </p>
 
-          <div class="video-wrapper">
-            <iframe
-              id="materiYoutube"
-              src="${embedUrl}"
-              title="Video pembelajaran ${item.nama}"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerpolicy="strict-origin-when-cross-origin"
-              allowfullscreen
-            ></iframe>
-          </div>
+          <div
+            class="video-wrapper"
+            id="materiYoutubeTarget"
+          ></div>
 
           <button
             type="button"
@@ -2612,6 +2874,11 @@
 
         </div>
       `;
+
+        putarYoutubeDenganSuara(
+          item.video,
+          "materiYoutubeTarget"
+        );
       }
 
       function kembaliKePilihan() {
@@ -2625,17 +2892,7 @@
       function tutupModalMateri() {
         const modal = document.getElementById("materialModal");
 
-        const video = modal.querySelector("video");
-
-        if (video) {
-          video.pause();
-        }
-
-        const youtubeFrame = modal.querySelector("iframe");
-
-        if (youtubeFrame) {
-          youtubeFrame.src = "about:blank";
-        }
+        sembunyikanPlayerYoutube();
 
         modal.classList.remove("open");
         document.body.style.overflow = "";
@@ -2790,6 +3047,12 @@
       });
 
       window.addEventListener("DOMContentLoaded", function () {
+        /*
+          Muat pemutar YouTube lebih awal agar klik tombol
+          Menonton Video dapat langsung memutar dengan suara.
+        */
+        muatYoutubeIframeAPI();
+
         /*
           Semua progres kembali ke 0/11 setiap
           materi.html dibuka ulang atau di-refresh.
