@@ -2205,6 +2205,12 @@
       `;
       }
 
+      /*
+        Video YouTube dimulai otomatis dalam keadaan tanpa suara.
+        Cara ini membuat autoplay lebih konsisten pada browser HP.
+        Siswa tetap dapat menyalakan suara melalui kontrol YouTube.
+      */
+
       function buatEmbedYoutube(url) {
         try {
           const alamat = new URL(url);
@@ -2227,7 +2233,13 @@
           return (
             "https://www.youtube-nocookie.com/embed/" +
             videoId +
-            "?autoplay=1&rel=0&playsinline=1&modestbranding=1"
+            "?autoplay=1" +
+            "&mute=1" +
+            "&playsinline=1" +
+            "&rel=0" +
+            "&controls=1" +
+            "&modestbranding=1" +
+            "&enablejsapi=1"
           );
         } catch (error) {
           return "";
@@ -2256,8 +2268,9 @@
             <iframe
               id="introYoutube"
               src="${embedUrl}"
+              loading="eager"
               title="Video pembelajaran ${item.pertanyaan}"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerpolicy="strict-origin-when-cross-origin"
               allowfullscreen
             ></iframe>
@@ -2595,8 +2608,9 @@
             <iframe
               id="materiYoutube"
               src="${embedUrl}"
+              loading="eager"
               title="Video pembelajaran ${item.nama}"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerpolicy="strict-origin-when-cross-origin"
               allowfullscreen
             ></iframe>
