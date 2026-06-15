@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#7fcfef" />
+    <title>Media Pembelajaran Kenampakan Alam dan Buatan</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #dff5ff;
+      }
+      body {
+        position: relative;
+        font-family: Arial, sans-serif;
+      }
+      .app-stage {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        position: relative;
+        background: #dff5ff;
+      }
+      #appFrame {
+        width: 100%;
+        height: 100%;
+        display: block;
+        border: 0;
+        background: #dff5ff;
+        opacity: 1;
+        transform: scale(1);
+        transition:
+          opacity 0.18s ease,
+          transform 0.18s ease;
+      }
+      #appFrame.is-changing {
+        opacity: 0;
+        transform: scale(0.992);
+      }
+      .app-footer {
+        position: fixed;
+        left: 50%;
+        bottom: max(5px, env(safe-area-inset-bottom));
+        z-index: 5;
+        transform: translateX(-50%);
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: rgba(38, 63, 58, 0.3);
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1;
+        letter-spacing: 0.1px;
+        text-align: center;
+        white-space: nowrap;
+        pointer-events: none;
+        box-shadow: none;
+      }
+      @media (max-width: 480px) {
+        .app-footer {
+          bottom: max(4px, env(safe-area-inset-bottom));
+          font-size: 9px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #appFrame {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app-stage" aria-label="Media pembelajaran">
+      <iframe
+        id="appFrame"
+        title="Media Pembelajaran Kenampakan Alam dan Buatan"
+        src="home.html"
+        loading="eager"
+        allow="autoplay; fullscreen"
+      ></iframe>
+    </main>
+
+    <footer class="app-footer">© 2026 Pannpann</footer>
+
+    <script>
+      (function () {
+        const frame = document.getElementById("appFrame");
+        const routes = {
+          beranda: "home.html",
+          materi: "materi.html",
+          bermain: "bermain.html",
+          latihan: "latihan.html",
+          nilai: "nilai.html",
+        };
+
+        function bersihkanAlamat() {
+          try {
+            const pathBersih = window.location.pathname.replace(
+              /index\.html$/i,
+              "",
+            );
+            window.history.replaceState(null, "", pathBersih || "./");
+          } catch (error) {
+            /* Mode file lokal dapat membatasi History API. */
+          }
+        }
+
+        window.appNavigate = function (route) {
+          const tujuan = routes[route] || routes.beranda;
+
+          try {
+            sessionStorage.setItem(
+              "appRoute",
+              route in routes ? route : "beranda",
+            );
+          } catch (error) {}
+
+          frame.classList.add("is-changing");
+
+          setTimeout(function () {
+            frame.src = tujuan;
+          }, 170);
+
+          bersihkanAlamat();
+        };
+
+        frame.addEventListener("load", function () {
+          frame.classList.remove("is-changing");
+          bersihkanAlamat();
+        });
+
+        let ruteAwal = "beranda";
+        try {
+          const tersimpan = sessionStorage.getItem("appRoute");
+          if (tersimpan && routes[tersimpan]) ruteAwal = tersimpan;
+        } catch (error) {}
+
+        frame.src = routes[ruteAwal];
+        bersihkanAlamat();
+      })();
+    </script>
+  </body>
+</html>

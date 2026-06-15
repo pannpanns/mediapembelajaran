@@ -1,0 +1,900 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Kenampakan Alam dan Buatan</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Fredoka", sans-serif;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        min-height: 100vh;
+        background: #87ceeb;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      .background-blur {
+        position: fixed;
+        inset: -15px;
+        z-index: 0;
+
+        background-image: url("assets/background.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        filter: blur(3px);
+        transform: scale(1.04);
+
+        pointer-events: none;
+
+        animation: backgroundMasuk 1.5s ease-out backwards;
+      }
+
+      .overlay {
+        width: 100%;
+        min-height: 100vh;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding: 30px 15px;
+
+        position: relative;
+        z-index: 1;
+
+        background: linear-gradient(
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0.1)
+        );
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        text-align: center;
+      }
+
+      .title-top,
+      .title-bottom {
+        font-size: clamp(2rem, 6vw, 4.5rem);
+        font-weight: 700;
+
+        text-shadow:
+          -3px -3px 0 white,
+          3px -3px 0 white,
+          -3px 3px 0 white,
+          3px 3px 0 white,
+          0 8px 20px rgba(0, 0, 0, 0.25);
+      }
+
+      .title-top {
+        color: #2e7d32;
+
+        animation: judulAtasMasuk 0.9s 0.15s cubic-bezier(0.34, 1.56, 0.64, 1)
+          backwards;
+      }
+
+      .title-bottom {
+        color: #1565c0;
+
+        animation: judulBawahMasuk 0.9s 0.55s cubic-bezier(0.34, 1.56, 0.64, 1)
+          backwards;
+      }
+
+      .title-middle {
+        width: 130px;
+
+        margin: 15px auto;
+        padding: 10px 0;
+
+        background: linear-gradient(to bottom, #2f80ed, #1565c0);
+
+        color: white;
+
+        font-size: 1.5rem;
+        font-weight: 700;
+
+        border-radius: 30px;
+
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+
+        animation: danMasuk 0.8s 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)
+          backwards;
+      }
+
+      .kelas {
+        display: inline-block;
+
+        margin-top: 25px;
+        padding: 12px 45px;
+
+        background: linear-gradient(to bottom, #ffb300, #ff8f00);
+
+        color: white;
+
+        font-size: clamp(1rem, 3vw, 1.8rem);
+        font-weight: 700;
+
+        border-radius: 12px;
+
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
+
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+
+        animation: kelasMasuk 0.8s 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)
+          backwards;
+      }
+
+      .desc {
+        max-width: 700px;
+
+        margin: 20px auto 0;
+
+        color: #000;
+        font-size: clamp(1rem, 2vw, 1.3rem);
+        font-weight: 700;
+
+        text-shadow:
+          -1px -1px 0 #fff,
+          1px -1px 0 #fff,
+          -1px 1px 0 #fff,
+          1px 1px 0 #fff,
+          0 10px 10px rgba(0, 0, 0, 0.2);
+
+        animation: deskripsiMasuk 0.8s 1s ease-out backwards;
+      }
+
+      .status-selesai {
+        display: none;
+
+        max-width: 700px;
+
+        margin: 20px auto 0;
+        padding: 13px 20px;
+
+        border: 3px solid rgba(255, 255, 255, 0.9);
+        border-radius: 18px;
+
+        background: rgba(56, 176, 0, 0.92);
+        color: white;
+
+        font-size: 1rem;
+        font-weight: 700;
+
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .status-selesai.visible {
+        display: block;
+
+        animation: statusMasuk 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .menu {
+        max-width: 1000px;
+
+        margin: 40px auto 0;
+
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+
+        gap: 20px;
+      }
+
+      .card {
+        width: 100%;
+        min-height: 200px;
+
+        position: relative;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        border: 4px solid rgba(255, 255, 255, 0.8);
+        border-radius: 30px;
+
+        color: white;
+        cursor: pointer;
+
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease,
+          filter 0.3s ease;
+      }
+
+      .card:nth-child(1) {
+        animation: kartuMasuk 0.75s 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)
+          backwards;
+      }
+
+      .card:nth-child(2) {
+        animation: kartuMasuk 0.75s 1.35s cubic-bezier(0.34, 1.56, 0.64, 1)
+          backwards;
+      }
+
+      .card:nth-child(3) {
+        animation: kartuMasuk 0.75s 1.5s cubic-bezier(0.34, 1.56, 0.64, 1)
+          backwards;
+      }
+
+      .card:nth-child(4) {
+        animation: kartuMasuk 0.75s 1.65s cubic-bezier(0.34, 1.56, 0.64, 1)
+          backwards;
+      }
+
+      .card:hover {
+        transform: translateY(-10px) scale(1.05);
+
+        box-shadow: 0 17px 35px rgba(0, 0, 0, 0.3);
+      }
+
+      .card:active {
+        transform: scale(0.96);
+      }
+
+      .card .icon,
+      .card .big-lock {
+        font-size: 70px;
+      }
+
+      .card .icon {
+        animation: ikonMengambang 2.5s ease-in-out infinite;
+      }
+
+      .card h3 {
+        margin-top: 15px;
+        font-size: 2rem;
+      }
+
+      .belajar {
+        background: #38b000;
+      }
+
+      .bermain {
+        background: #1e88e5;
+      }
+
+      .latihan {
+        background: #8e24aa;
+      }
+
+      .nilai {
+        background: #fb8c00;
+      }
+
+      .locked {
+        background: #9e9e9e !important;
+        filter: grayscale(100%);
+        cursor: not-allowed;
+        opacity: 0.88;
+      }
+
+      .locked:hover {
+        transform: none;
+
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      }
+
+      .locked .big-lock {
+        margin-bottom: 5px;
+
+        animation: gembokBergerak 2s ease-in-out infinite;
+      }
+
+      .unlocked-animation {
+        animation: menuTerbuka 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+      }
+
+      .modal {
+        display: none;
+
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+
+        padding: 20px;
+
+        justify-content: center;
+        align-items: center;
+
+        background: rgba(0, 0, 0, 0.55);
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-content {
+        width: 500px;
+        max-width: 90%;
+
+        padding: 30px;
+
+        border: 4px solid #d2efc3;
+        border-radius: 25px;
+
+        background: white;
+
+        text-align: center;
+
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+
+        animation: modalMasuk 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .modal-content h2 {
+        margin-bottom: 15px;
+        color: #8e24aa;
+      }
+
+      .modal-content p {
+        color: #444;
+        font-size: 1.1rem;
+        line-height: 1.7;
+      }
+
+      .modal-content button {
+        margin-top: 20px;
+        padding: 12px 30px;
+
+        border: none;
+        border-radius: 15px;
+
+        background: #38b000;
+        color: white;
+
+        font-size: 1rem;
+        font-weight: 700;
+
+        cursor: pointer;
+
+        transition:
+          transform 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .modal-content button:hover {
+        background: #2d9100;
+        transform: scale(1.06);
+      }
+
+      body.page-out .overlay {
+        animation: halamanKeluar 0.45s ease forwards;
+      }
+
+      body.page-out .background-blur {
+        animation: backgroundKeluar 0.45s ease forwards;
+      }
+
+      @keyframes backgroundMasuk {
+        from {
+          opacity: 0;
+          transform: scale(1.15);
+          filter: blur(12px);
+        }
+
+        to {
+          opacity: 1;
+          transform: scale(1.04);
+          filter: blur(3px);
+        }
+      }
+
+      @keyframes judulAtasMasuk {
+        from {
+          opacity: 0;
+          transform: translateY(-70px) scale(0.85);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes judulBawahMasuk {
+        from {
+          opacity: 0;
+          transform: translateY(70px) scale(0.85);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes danMasuk {
+        from {
+          opacity: 0;
+          transform: rotate(-15deg) scale(0);
+        }
+
+        to {
+          opacity: 1;
+          transform: rotate(0) scale(1);
+        }
+      }
+
+      @keyframes kelasMasuk {
+        from {
+          opacity: 0;
+          transform: scale(0);
+        }
+
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes deskripsiMasuk {
+        from {
+          opacity: 0;
+          transform: translateY(25px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes kartuMasuk {
+        from {
+          opacity: 0;
+          transform: translateY(80px) scale(0.75);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes ikonMengambang {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+
+        50% {
+          transform: translateY(-8px);
+        }
+      }
+
+      @keyframes gembokBergerak {
+        0%,
+        100% {
+          transform: rotate(0);
+        }
+
+        25% {
+          transform: rotate(-4deg);
+        }
+
+        75% {
+          transform: rotate(4deg);
+        }
+      }
+
+      @keyframes menuTerbuka {
+        0% {
+          transform: scale(0.7);
+        }
+
+        55% {
+          transform: scale(1.12);
+        }
+
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      @keyframes statusMasuk {
+        from {
+          opacity: 0;
+          transform: translateY(-20px) scale(0.8);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes modalMasuk {
+        from {
+          opacity: 0;
+          transform: translateY(30px) scale(0.75);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes halamanKeluar {
+        from {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        to {
+          opacity: 0;
+          transform: scale(0.96);
+        }
+      }
+
+      @keyframes backgroundKeluar {
+        from {
+          opacity: 1;
+          transform: scale(1.04);
+        }
+
+        to {
+          opacity: 0;
+          transform: scale(1.12);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .menu {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .card {
+          min-height: 160px;
+        }
+
+        .card .icon,
+        .card .big-lock {
+          font-size: 48px;
+        }
+
+        .card h3 {
+          font-size: 1.25rem;
+        }
+
+        .title-middle {
+          width: 80px;
+          font-size: 1rem;
+        }
+      }
+
+      @media (max-width: 500px) {
+        .overlay {
+          align-items: flex-start;
+          padding-top: 35px;
+          padding-bottom: 35px;
+        }
+
+        .menu {
+          grid-template-columns: 1fr;
+        }
+
+        .card {
+          min-height: 140px;
+        }
+
+        .title-top,
+        .title-bottom {
+          line-height: 1.1;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-delay: 0ms !important;
+          animation-iteration-count: 1 !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="background-blur"></div>
+
+    <div class="overlay">
+      <div class="container">
+        <h1 class="title-top">KENAMPAKAN ALAM</h1>
+
+        <div class="title-middle">DAN</div>
+
+        <h1 class="title-bottom">KENAMPAKAN BUATAN</h1>
+
+        <div class="kelas">Kelas 3 SD</div>
+
+        <p class="desc">
+          Ayo belajar mengenal kenampakan alam dan kenampakan buatan di sekitar
+          kita!
+        </p>
+
+        <div class="status-selesai" id="statusSelesai">
+          🎉 Materi selesai! Menu bermain, latihan, dan nilai sudah terbuka.
+        </div>
+
+        <div class="menu">
+          <div
+            class="card belajar"
+            onclick="belajar()"
+            role="button"
+            tabindex="0"
+          >
+            <div class="icon">📖</div>
+            <h3>Mulai Belajar</h3>
+          </div>
+
+          <div
+            class="card bermain locked"
+            id="menuBermain"
+            onclick="cekMenu('bermain')"
+            role="button"
+            tabindex="0"
+          >
+            <div class="big-lock">🔒</div>
+            <h3>Bermain</h3>
+          </div>
+
+          <div
+            class="card latihan locked"
+            id="menuLatihan"
+            onclick="cekMenu('latihan')"
+            role="button"
+            tabindex="0"
+          >
+            <div class="big-lock">🔒</div>
+            <h3>Latihan Soal</h3>
+          </div>
+
+          <div
+            class="card nilai locked"
+            id="menuNilai"
+            onclick="cekMenu('nilai')"
+            role="button"
+            tabindex="0"
+          >
+            <div class="big-lock">🔒</div>
+            <h3>Nilai</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="modal" role="dialog" aria-modal="true">
+      <div class="modal-content">
+        <h2>🔒 Fitur Terkunci</h2>
+
+        <p id="pesan"></p>
+
+        <button type="button" onclick="tutupModal()">Mengerti</button>
+      </div>
+    </div>
+
+    <script>
+      /* Navigasi aplikasi tanpa mengubah URL utama di address bar. */
+      function navigasiAplikasi(target) {
+        const namaFile = String(target || "")
+          .split("?")[0]
+          .split("#")[0]
+          .split("/")
+          .pop()
+          .toLowerCase();
+
+        const petaRute = {
+          "": "beranda",
+          "index.html": "beranda",
+          "home.html": "beranda",
+          beranda: "beranda",
+          "materi.html": "materi",
+          materi: "materi",
+          "bermain.html": "bermain",
+          bermain: "bermain",
+          "latihan.html": "latihan",
+          latihan: "latihan",
+          "nilai.html": "nilai",
+          nilai: "nilai",
+        };
+
+        const rute = petaRute[namaFile] || "beranda";
+
+        if (
+          window.parent !== window &&
+          typeof window.parent.appNavigate === "function"
+        ) {
+          window.parent.appNavigate(rute);
+          return;
+        }
+
+        const fallback = {
+          beranda: "index.html",
+          materi: "materi.html",
+          bermain: "bermain.html",
+          latihan: "latihan.html",
+          nilai: "nilai.html",
+        };
+
+        window.location.href = fallback[rute];
+      }
+
+      const halamanMenu = {
+        bermain: "bermain.html",
+        latihan: "latihan.html",
+        nilai: "nilai.html",
+      };
+
+      function pindahHalaman(url) {
+        document.body.classList.add("page-out");
+
+        setTimeout(function () {
+          navigasiAplikasi(url);
+        }, 430);
+      }
+
+      function belajar() {
+        pindahHalaman("materi.html");
+      }
+
+      function cekMenu(menu) {
+        const kartu = document.querySelector("." + menu);
+
+        if (!kartu.classList.contains("locked")) {
+          pindahHalaman(halamanMenu[menu]);
+          return;
+        }
+
+        let pesan = "";
+
+        if (menu === "bermain") {
+          pesan =
+            "Silakan pelajari seluruh materi terlebih dahulu sebelum mulai bermain.";
+        }
+
+        if (menu === "latihan") {
+          pesan =
+            "Silakan pelajari seluruh materi terlebih dahulu sebelum mengerjakan latihan soal.";
+        }
+
+        if (menu === "nilai") {
+          pesan =
+            "Silakan pelajari seluruh materi terlebih dahulu sebelum melihat nilai.";
+        }
+
+        document.getElementById("pesan").textContent = pesan;
+        document.getElementById("modal").style.display = "flex";
+      }
+
+      function tutupModal() {
+        document.getElementById("modal").style.display = "none";
+      }
+
+      function simpanStatusSelesai() {
+        try {
+          sessionStorage.setItem("pembelajaranSelesai", "true");
+        } catch (error) {
+          console.log("Penyimpanan browser tidak tersedia.");
+        }
+      }
+
+      function ambilStatusSelesai() {
+        try {
+          return sessionStorage.getItem("pembelajaranSelesai") === "true";
+        } catch (error) {
+          return false;
+        }
+      }
+
+      function bukaSemuaMenu() {
+        const daftarMenu = [
+          {
+            elemen: document.getElementById("menuBermain"),
+            ikon: "🎮",
+            nama: "Bermain",
+          },
+          {
+            elemen: document.getElementById("menuLatihan"),
+            ikon: "📝",
+            nama: "Latihan Soal",
+          },
+          {
+            elemen: document.getElementById("menuNilai"),
+            ikon: "🏆",
+            nama: "Nilai",
+          },
+        ];
+
+        daftarMenu.forEach(function (item) {
+          item.elemen.classList.remove("locked");
+
+          item.elemen.innerHTML = `
+          <div class="icon">${item.ikon}</div>
+          <h3>${item.nama}</h3>
+        `;
+        });
+
+        /*
+          Jalankan animasi keempat kartu secara bersamaan,
+          termasuk kartu Mulai Belajar.
+        */
+        const semuaKartu = document.querySelectorAll(".card");
+
+        semuaKartu.forEach(function (kartu) {
+          kartu.classList.remove("unlocked-animation");
+        });
+
+        /*
+          Memaksa browser mereset animasi agar semuanya
+          benar-benar dimulai pada waktu yang sama.
+        */
+        void document.querySelector(".menu").offsetWidth;
+
+        semuaKartu.forEach(function (kartu) {
+          kartu.classList.add("unlocked-animation");
+        });
+
+        document.getElementById("statusSelesai").classList.add("visible");
+      }
+
+      document
+        .getElementById("modal")
+        .addEventListener("click", function (event) {
+          if (event.target === this) {
+            tutupModal();
+          }
+        });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          tutupModal();
+        }
+
+        if (
+          event.key === "Enter" &&
+          document.activeElement.classList.contains("card")
+        ) {
+          document.activeElement.click();
+        }
+      });
+
+      window.addEventListener("DOMContentLoaded", function () {
+        const parameter = new URLSearchParams(window.location.search);
+
+        if (parameter.get("belajar") === "selesai") {
+          simpanStatusSelesai();
+        }
+
+        if (ambilStatusSelesai()) {
+          bukaSemuaMenu();
+        }
+      });
+    </script>
+  </body>
+</html>
