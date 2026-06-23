@@ -1732,7 +1732,7 @@
               </tr>
 
               <tr>
-                <td>Contoh: gunung, sungai, danau, pantai, dan laut.</td>
+                <td>Contoh: gunung, sungai, danau, dan laut.</td>
 
                 <td>Contoh: jalan raya, jembatan, waduk, dan sekolah.</td>
               </tr>
@@ -1802,7 +1802,7 @@
       const materiDipelajari = new Set();
 
       /*
-      Materi perbedaan dihitung sebagai materi ke-11.
+      Materi perbedaan dihitung sebagai materi terakhir.
       Nilai ini kembali false saat halaman di-refresh.
     */
       let perbedaanDipelajari = false;
@@ -1867,7 +1867,7 @@
 
             contoh: "Gunung Agung di Bali.",
 
-            video: "https://youtu.be/P_QtcOiVnKw?si=-qM2BjxEPGUS0c0X",
+            video: "https://youtu.be/O8c7ymEpT8o?si=Ebciju2eKQQPD19B",
           },
 
           {
@@ -1893,7 +1893,7 @@
 
             contoh: "",
 
-            video: "https://youtu.be/P_QtcOiVnKw?si=-qM2BjxEPGUS0c0X",
+            video: "https://youtu.be/5Nn_WO83jbA?si=EWn9DoEVhVDxEoL5",
           },
 
           {
@@ -1915,33 +1915,7 @@
 
             contoh: "",
 
-            video: "https://youtu.be/P_QtcOiVnKw?si=-qM2BjxEPGUS0c0X",
-          },
-
-          {
-            id: "pantai",
-            nama: "Pantai",
-            emoji: "🏖️",
-            gambar: "assets/pantai.png",
-
-            deskripsi:
-              "Pantai adalah wilayah pertemuan antara daratan dan laut.",
-
-            ciri: [
-              "Berpasir atau berbatu.",
-              "Memiliki ombak.",
-              "Banyak ditemukan pohon kelapa.",
-            ],
-
-            manfaat: [
-              "Tempat wisata.",
-              "Tempat mencari ikan.",
-              "Tempat pelabuhan.",
-            ],
-
-            contoh: "Pantai Kuta di Bali.",
-
-            video: "https://youtu.be/P_QtcOiVnKw?si=-qM2BjxEPGUS0c0X",
+            video: "https://youtu.be/X3b1CPQhC-I?si=ig6gpl9dntbDi-WF",
           },
 
           {
@@ -1966,7 +1940,7 @@
 
             contoh: "",
 
-            video: "https://youtu.be/P_QtcOiVnKw?si=-qM2BjxEPGUS0c0X",
+            video: "https://youtu.be/lr6CvGXnFks?si=3-C5xIorXXkpKXdX",
           },
 
           {
@@ -1992,7 +1966,7 @@
 
             contoh: "",
 
-            video: "https://youtu.be/P_QtcOiVnKw?si=-qM2BjxEPGUS0c0X",
+            video: "https://youtu.be/LseuzsFGxSM?si=4OPgH6ljtnwDCiCS",
           },
         ],
 
@@ -2016,7 +1990,7 @@
 
             contoh: "",
 
-            video: "https://youtu.be/-MfppVZrUrQ?si=kc-gevgvve6kJi0t",
+            video: "https://youtu.be/oLd4dK-J0HQ?si=cPxABaLf3EuXNjuW",
           },
 
           {
@@ -2038,7 +2012,7 @@
 
             contoh: "",
 
-            video: "https://youtu.be/-MfppVZrUrQ?si=kc-gevgvve6kJi0t",
+            video: "https://youtu.be/aOLksHHesFA?si=3t6ZWLu6LWeyrY1i",
           },
 
           {
@@ -2061,7 +2035,7 @@
 
             contoh: "",
 
-            video: "https://youtu.be/-MfppVZrUrQ?si=kc-gevgvve6kJi0t",
+            video: "https://youtu.be/xDQrGb0_FCg?si=jHLRVMF43bF4vrKE",
           },
 
           {
@@ -2083,7 +2057,7 @@
 
             contoh: "",
 
-            video: "https://youtu.be/-MfppVZrUrQ?si=kc-gevgvve6kJi0t",
+            video: "https://youtu.be/4sVX0DHYJRI?si=gh45QV8Wzkm-HzQk",
           },
         ],
       };
@@ -2816,7 +2790,7 @@
         const jumlahDipelajari = hitungJumlahMateriDipelajari();
 
         if (jumlahDipelajari === 0) {
-          info.textContent = "Materi dimulai dari awal • 0/11";
+          info.textContent = "Materi dimulai dari awal • 0/" + totalSeluruhMateri;
 
           return;
         }
@@ -2853,7 +2827,7 @@
 
           /*
           Homepage baru dibuka setelah seluruh
-          11 materi selesai dipelajari.
+          semua materi selesai dipelajari.
         */
           simpanStatusSelesai();
         } else {
@@ -2927,7 +2901,7 @@
         muatYoutubeIframeAPI();
 
         /*
-          Semua progres kembali ke 0/11 setiap
+          Semua progres kembali ke 0 sesuai jumlah materi setiap
           materi.html dibuka ulang atau di-refresh.
         */
         materiDipelajari.clear();
