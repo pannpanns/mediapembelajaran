@@ -999,12 +999,12 @@
         window.location.href = fallback[rute];
       }
 
-      const soalPilihanGanda = [
+      const bankSoalPilihanGanda = [
         {
           pertanyaan:
-            "Kenampakan alam yang merupakan pertemuan antara daratan dan laut adalah ....",
-          pilihan: ["Sungai", "Pantai", "Danau", "Bukit"],
-          jawaban: 1,
+            "Sebuah daerah sering mengalami kekurangan air saat musim kemarau. Untuk menyimpan air dalam jumlah besar, pemerintah dapat membangun ....",
+          pilihan: ["Bukit", "Pantai", "Waduk", "Laut"],
+          jawabanBenar: "Waduk",
         },
         {
           pertanyaan: "Jalan raya termasuk ....",
@@ -1014,17 +1014,17 @@
             "Sumber daya alam",
             "Lingkungan alami",
           ],
-          jawaban: 1,
+          jawabanBenar: "Kenampakan buatan",
         },
         {
           pertanyaan: "Air laut memiliki rasa ....",
           pilihan: ["Manis", "Tawar", "Asin", "Pahit"],
-          jawaban: 2,
+          jawabanBenar: "Asin",
         },
         {
           pertanyaan: "Tempat untuk menimba ilmu disebut ....",
           pilihan: ["Waduk", "Jembatan", "Sekolah", "Pantai"],
-          jawaban: 2,
+          jawabanBenar: "Sekolah",
         },
         {
           pertanyaan: "Gunung termasuk ....",
@@ -1034,20 +1034,30 @@
             "Bangunan",
             "Sarana transportasi",
           ],
-          jawaban: 0,
+          jawabanBenar: "Kenampakan alam",
         },
       ];
 
-      const soalIsian = [
+      /*
+        Soal pilihan ganda dan urutan jawabannya diacak
+        agar urutan soal dan posisi A/B/C/D berbeda setiap mulai latihan.
+      */
+      let soalPilihanGanda = siapkanSoalPilihanGanda(bankSoalPilihanGanda);
+
+      const bankSoalIsian = [
         {
           kalimat:
             "Sungai merupakan aliran ______ yang mengalir dari tempat tinggi ke tempat rendah.",
           jawaban: "air",
         },
-        { kalimat: "Waduk dibuat oleh ______.", jawaban: "manusia" },
         {
-          kalimat: "Pantai merupakan batas antara daratan dan ______.",
-          jawaban: "laut",
+          kalimat: "Waduk dibuat oleh ______.",
+          jawaban: "manusia",
+        },
+        {
+          kalimat:
+            "Jika sebuah desa terpisah oleh sungai yang lebar, pembangunan ______ dapat mempermudah transportasi masyarakat.",
+          jawaban: "jembatan",
         },
         {
           kalimat: "Jalan raya digunakan untuk sarana ______.",
@@ -1058,6 +1068,12 @@
           jawaban: "luas",
         },
       ];
+
+      /*
+        Soal isian juga diacak agar urutan soal berbeda
+        setiap siswa mulai latihan baru.
+      */
+      let soalIsian = siapkanSoalIsian(bankSoalIsian);
 
       let namaSiswa = "";
       let bagianAktif = "pilihan-ganda";
@@ -1070,14 +1086,17 @@
       const semuaJawabanIsian = [
         "air",
         "manusia",
-        "laut",
+        "jembatan",
         "transportasi",
         "luas",
       ];
 
-      const urutanPilihanIsian = soalIsian.map(function () {
-        return acakArray(semuaJawabanIsian);
-      });
+      /*
+        Kepingan jawaban isian ikut diacak dan disimpan,
+        supaya saat refresh di tengah pengerjaan posisinya
+        tetap konsisten.
+      */
+      let urutanPilihanIsian = siapkanUrutanPilihanIsian(soalIsian);
 
       let latihanSudahSelesai = false;
 
@@ -1095,13 +1114,134 @@
         return hasil;
       }
 
+      function acakSoalPilihanGanda(bankSoal) {
+        return acakArray(bankSoal).map(function (soal) {
+          const pilihanAcak = acakArray(soal.pilihan);
+          const jawabanAcak = pilihanAcak.indexOf(soal.jawabanBenar);
+
+          return {
+            pertanyaan: soal.pertanyaan,
+            pilihan: pilihanAcak,
+            jawaban: jawabanAcak,
+            jawabanBenar: soal.jawabanBenar,
+          };
+        });
+      }
+
+      function siapkanSoalPilihanGanda(bankSoal) {
+        try {
+          const sedangBerlangsung =
+            sessionStorage.getItem("latihanSedangBerlangsung") === "true";
+
+          const dataSoalTersimpan =
+            sessionStorage.getItem("soalPilihanGandaAcak");
+
+          if (sedangBerlangsung && dataSoalTersimpan) {
+            const soalTersimpan = JSON.parse(dataSoalTersimpan);
+
+            if (
+              Array.isArray(soalTersimpan) &&
+              soalTersimpan.length === bankSoal.length
+            ) {
+              return soalTersimpan;
+            }
+          }
+        } catch (error) {
+          console.log("Urutan soal tersimpan tidak dapat digunakan.");
+        }
+
+        const soalBaru = acakSoalPilihanGanda(bankSoal);
+
+        try {
+          sessionStorage.setItem(
+            "soalPilihanGandaAcak",
+            JSON.stringify(soalBaru),
+          );
+        } catch (error) {
+          console.log("Urutan soal tidak dapat disimpan.");
+        }
+
+        return soalBaru;
+      }
+
+      function siapkanSoalIsian(bankSoal) {
+        try {
+          const sedangBerlangsung =
+            sessionStorage.getItem("latihanSedangBerlangsung") === "true";
+
+          const dataSoalTersimpan =
+            sessionStorage.getItem("soalIsianAcak");
+
+          if (sedangBerlangsung && dataSoalTersimpan) {
+            const soalTersimpan = JSON.parse(dataSoalTersimpan);
+
+            if (
+              Array.isArray(soalTersimpan) &&
+              soalTersimpan.length === bankSoal.length
+            ) {
+              return soalTersimpan;
+            }
+          }
+        } catch (error) {
+          console.log("Urutan soal isian tersimpan tidak dapat digunakan.");
+        }
+
+        const soalBaru = acakArray(bankSoal);
+
+        try {
+          sessionStorage.setItem("soalIsianAcak", JSON.stringify(soalBaru));
+        } catch (error) {
+          console.log("Urutan soal isian tidak dapat disimpan.");
+        }
+
+        return soalBaru;
+      }
+
+      function siapkanUrutanPilihanIsian(daftarSoal) {
+        try {
+          const sedangBerlangsung =
+            sessionStorage.getItem("latihanSedangBerlangsung") === "true";
+
+          const dataPilihanTersimpan =
+            sessionStorage.getItem("urutanPilihanIsianAcak");
+
+          if (sedangBerlangsung && dataPilihanTersimpan) {
+            const pilihanTersimpan = JSON.parse(dataPilihanTersimpan);
+
+            if (
+              Array.isArray(pilihanTersimpan) &&
+              pilihanTersimpan.length === daftarSoal.length
+            ) {
+              return pilihanTersimpan;
+            }
+          }
+        } catch (error) {
+          console.log("Urutan pilihan isian tersimpan tidak dapat digunakan.");
+        }
+
+        const pilihanBaru = daftarSoal.map(function () {
+          return acakArray(semuaJawabanIsian);
+        });
+
+        try {
+          sessionStorage.setItem(
+            "urutanPilihanIsianAcak",
+            JSON.stringify(pilihanBaru),
+          );
+        } catch (error) {
+          console.log("Urutan pilihan isian tidak dapat disimpan.");
+        }
+
+        return pilihanBaru;
+      }
+
       function mulaiLatihan() {
         const input = document.getElementById("nameInput");
         const nama = input.value.trim();
 
-        if (nama.length < 2) {
+        if (nama.length < 3) {
           document.getElementById("nameError").textContent =
-            "Tuliskan nama minimal 2 huruf, ya.";
+            "Tuliskan nama minimal 3 huruf ya.";
           input.focus();
           return;
         }
@@ -1499,11 +1639,11 @@
         if (bagianAktif === "pilihan-ganda") {
           const answered = jawabanPilihanGanda.filter((j) => j !== null).length;
           document.getElementById("sectionScoreText").textContent =
-            "Terjawab: " + answered + "/5";
+            "Terjawab: " + answered + "/" + soalPilihanGanda.length;
         } else {
           const filled = jawabanIsian.filter((j) => j.trim() !== "").length;
           document.getElementById("sectionScoreText").textContent =
-            "Terisi: " + filled + "/5";
+            "Terisi: " + filled + "/" + soalIsian.length;
         }
       }
 
@@ -1516,6 +1656,15 @@
         try {
           sessionStorage.setItem("latihanSelesai", "true");
           sessionStorage.setItem("latihanSedangBerlangsung", "false");
+          sessionStorage.setItem(
+            "soalPilihanGandaAcak",
+            JSON.stringify(soalPilihanGanda),
+          );
+          sessionStorage.setItem("soalIsianAcak", JSON.stringify(soalIsian));
+          sessionStorage.setItem(
+            "urutanPilihanIsianAcak",
+            JSON.stringify(urutanPilihanIsian),
+          );
           sessionStorage.setItem("namaSiswa", namaSiswa);
           sessionStorage.setItem("skorPilihanGanda", String(skorPilihanGanda));
           sessionStorage.setItem(
@@ -1538,8 +1687,17 @@
           sessionStorage.setItem("bagianAktifLatihan", bagianAktif);
           sessionStorage.setItem("indeksSoalLatihan", String(indeksSoal));
           sessionStorage.setItem(
+            "soalPilihanGandaAcak",
+            JSON.stringify(soalPilihanGanda),
+          );
+          sessionStorage.setItem(
             "jawabanPilihanGandaData",
             JSON.stringify(jawabanPilihanGanda),
+          );
+          sessionStorage.setItem("soalIsianAcak", JSON.stringify(soalIsian));
+          sessionStorage.setItem(
+            "urutanPilihanIsianAcak",
+            JSON.stringify(urutanPilihanIsian),
           );
           sessionStorage.setItem(
             "jawabanIsianData",
@@ -1557,8 +1715,46 @@
             sessionStorage.getItem("bagianAktifLatihan") || "pilihan-ganda";
           indeksSoal = Number(sessionStorage.getItem("indeksSoalLatihan") || 0);
 
+          const soalPilihanData = sessionStorage.getItem("soalPilihanGandaAcak");
+          const soalIsianData = sessionStorage.getItem("soalIsianAcak");
+          const pilihanIsianData = sessionStorage.getItem(
+            "urutanPilihanIsianAcak",
+          );
           const pilihanData = sessionStorage.getItem("jawabanPilihanGandaData");
           const isianData = sessionStorage.getItem("jawabanIsianData");
+
+          if (soalPilihanData) {
+            const soalTersimpan = JSON.parse(soalPilihanData);
+
+            if (
+              Array.isArray(soalTersimpan) &&
+              soalTersimpan.length === bankSoalPilihanGanda.length
+            ) {
+              soalPilihanGanda = soalTersimpan;
+            }
+          }
+
+          if (soalIsianData) {
+            const soalIsianTersimpan = JSON.parse(soalIsianData);
+
+            if (
+              Array.isArray(soalIsianTersimpan) &&
+              soalIsianTersimpan.length === bankSoalIsian.length
+            ) {
+              soalIsian = soalIsianTersimpan;
+            }
+          }
+
+          if (pilihanIsianData) {
+            const pilihanIsianTersimpan = JSON.parse(pilihanIsianData);
+
+            if (
+              Array.isArray(pilihanIsianTersimpan) &&
+              pilihanIsianTersimpan.length === soalIsian.length
+            ) {
+              urutanPilihanIsian = pilihanIsianTersimpan;
+            }
+          }
 
           if (pilihanData) {
             jawabanPilihanGanda = JSON.parse(pilihanData);
