@@ -866,8 +866,8 @@
 
         <div class="progress-area">
           <div class="progress-top">
-            <span id="progressText">Soal 1 dari 5</span>
-            <span id="sectionScoreText">Terjawab: 0/5</span>
+            <span id="progressText">Soal 1 dari 15</span>
+            <span id="sectionScoreText">Terjawab: 0/15</span>
           </div>
           <div class="progress-bar">
             <div class="progress-fill" id="progressFill"></div>
@@ -1036,6 +1036,100 @@
           ],
           jawabanBenar: "Kenampakan alam",
         },
+        {
+          pertanyaan:
+            "Banyak petani menanam sayuran di daerah pegunungan karena tanahnya ....",
+          pilihan: ["Tandus", "Subur", "Berpasir", "Keras"],
+          jawabanBenar: "Subur",
+        },
+        {
+          pertanyaan: "Manfaat utama jalan raya bagi masyarakat adalah ....",
+          pilihan: [
+            "Tempat bermain anak-anak",
+            "Memperlancar arus transportasi dan menghubungkan antarwilayah",
+            "Menyimpan air hujan",
+            "Tempat menanam sayuran",
+          ],
+          jawabanBenar:
+            "Memperlancar arus transportasi dan menghubungkan antarwilayah",
+        },
+        {
+          pertanyaan: "Salah satu manfaat sungai adalah untuk ....",
+          pilihan: [
+            "Sumber air",
+            "Menyimpan kendaraan",
+            "Bermain api",
+            "Membuang sampah",
+          ],
+          jawabanBenar: "Sumber air",
+        },
+        {
+          pertanyaan: "Manfaat jembatan bagi masyarakat adalah ....",
+          pilihan: [
+            "Memperindah pemandangan sungai saja",
+            "Memperlancar transportasi dan mempersingkat jarak tempuh antarwilayah",
+            "Mencegah banjir di sungai",
+            "Tempat menangkap ikan",
+          ],
+          jawabanBenar:
+            "Memperlancar transportasi dan mempersingkat jarak tempuh antarwilayah",
+        },
+        {
+          pertanyaan: "Orang yang bekerja menangkap ikan di laut disebut ....",
+          pilihan: ["Petani", "Pedagang", "Nelayan", "Peternak"],
+          jawabanBenar: "Nelayan",
+        },
+        {
+          pertanyaan: "Perbedaan utama antara danau alam dan waduk adalah ....",
+          pilihan: [
+            "Danau alam berisi air asin, waduk berisi air tawar",
+            "Danau alam terbentuk secara alami, waduk dibuat manusia dengan membendung sungai",
+            "Danau alam lebih dalam daripada waduk",
+            "Danau alam dibuat manusia, sedangkan waduk terbentuk sendiri",
+          ],
+          jawabanBenar:
+            "Danau alam terbentuk secara alami, waduk dibuat manusia dengan membendung sungai",
+        },
+        {
+          pertanyaan: "Bukit sering dimanfaatkan sebagai tempat ....",
+          pilihan: ["Wisata alam", "Pelabuhan", "Tambak garam", "Bandara"],
+          jawabanBenar: "Wisata alam",
+        },
+        {
+          pertanyaan: "Manfaat sekolah bagi kehidupan masyarakat adalah ....",
+          pilihan: [
+            "Tempat menyimpan hasil panen",
+            "Mencerdaskan anak bangsa dan mempersiapkan generasi masa depan",
+            "Tempat mengobati orang sakit",
+            "Tempat menjual ikan di pasar",
+          ],
+          jawabanBenar:
+            "Mencerdaskan anak bangsa dan mempersiapkan generasi masa depan",
+        },
+        {
+          pertanyaan:
+            "Mengapa pohon di sekitar sungai perlu dijaga kelestariannya?",
+          pilihan: [
+            "Agar sungai menjadi lebih sempit",
+            "Karena akar pohon membantu menahan tanah sehingga mengurangi erosi dan longsor",
+            "Agar air sungai berubah menjadi asin",
+            "Agar ikan tidak bisa hidup",
+          ],
+          jawabanBenar:
+            "Karena akar pohon membantu menahan tanah sehingga mengurangi erosi dan longsor",
+        },
+        {
+          pertanyaan:
+            "Mengapa jalan raya di daerah pegunungan dibuat berkelok-kelok / zig-zag?",
+          pilihan: [
+            "Agar terlihat lebih indah dari atas",
+            "Untuk mengurangi kemiringan agar kendaraan bisa melintas dengan aman",
+            "Karena bahan aspal tidak cukup untuk jalan lurus",
+            "Agar kendaraan berhenti lebih lama di jalan",
+          ],
+          jawabanBenar:
+            "Untuk mengurangi kemiringan agar kendaraan bisa melintas dengan aman",
+        },
       ];
 
       /*
@@ -1067,6 +1161,26 @@
           kalimat: "Laut merupakan perairan yang sangat ______.",
           jawaban: "luas",
         },
+        {
+          kalimat: "Sekolah adalah tempat untuk ______.",
+          jawaban: "Belajar dan menuntut ilmu",
+        },
+        {
+          kalimat: "Gunung adalah kenampakan alam yang ______.",
+          jawaban: "Tinggi menjulang",
+        },
+        {
+          kalimat: "Jembatan dibuat untuk ______.",
+          jawaban: "Menghubungkan dua tempat yang terpisah",
+        },
+        {
+          kalimat: "Jalan raya termasuk kenampakan ______.",
+          jawaban: "Buatan",
+        },
+        {
+          kalimat: "Waduk adalah danau yang dibuat oleh ______.",
+          jawaban: "Manusia dengan membendung sungai",
+        },
       ];
 
       /*
@@ -1089,6 +1203,11 @@
         "jembatan",
         "transportasi",
         "luas",
+        "Belajar dan menuntut ilmu",
+        "Tinggi menjulang",
+        "Menghubungkan dua tempat yang terpisah",
+        "Buatan",
+        "Manusia dengan membendung sungai",
       ];
 
       /*
@@ -1757,11 +1876,29 @@
           }
 
           if (pilihanData) {
-            jawabanPilihanGanda = JSON.parse(pilihanData);
+            const jawabanPilihanTersimpan = JSON.parse(pilihanData);
+
+            if (
+              Array.isArray(jawabanPilihanTersimpan) &&
+              jawabanPilihanTersimpan.length === soalPilihanGanda.length
+            ) {
+              jawabanPilihanGanda = jawabanPilihanTersimpan;
+            } else {
+              jawabanPilihanGanda = new Array(soalPilihanGanda.length).fill(null);
+            }
           }
 
           if (isianData) {
-            jawabanIsian = JSON.parse(isianData);
+            const jawabanIsianTersimpan = JSON.parse(isianData);
+
+            if (
+              Array.isArray(jawabanIsianTersimpan) &&
+              jawabanIsianTersimpan.length === soalIsian.length
+            ) {
+              jawabanIsian = jawabanIsianTersimpan;
+            } else {
+              jawabanIsian = new Array(soalIsian.length).fill("");
+            }
           }
 
           document.getElementById("studentBox").textContent =
