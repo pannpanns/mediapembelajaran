@@ -911,6 +911,10 @@
         gap: 18px;
       }
 
+      .learning-options.three-options {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
       .learning-option {
         padding: 25px 18px;
 
@@ -934,6 +938,16 @@
       .learning-option:last-child {
         border-color: #91c8f2;
         background: #e7f3ff;
+      }
+
+      .learning-options.three-options .learning-option:nth-child(2) {
+        border-color: #91c8f2;
+        background: #e7f3ff;
+      }
+
+      .learning-options.three-options .learning-option:last-child {
+        border-color: #f0c36c;
+        background: #fff5dc;
       }
 
       .learning-option:hover {
@@ -1451,6 +1465,10 @@
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
+        .learning-options.three-options {
+          grid-template-columns: 1fr;
+        }
+
         .app-container {
           padding: 25px 20px;
         }
@@ -1868,6 +1886,8 @@
             contoh: "Gunung Agung di Bali.",
 
             video: "https://youtu.be/O8c7ymEpT8o?si=Ebciju2eKQQPD19B",
+
+            videoSekitar: "https://youtube.com/shorts/RGXlD4N_Kgg?si=amU3fta0i0hbJ92g",
           },
 
           {
@@ -1894,6 +1914,8 @@
             contoh: "",
 
             video: "https://youtu.be/5Nn_WO83jbA?si=EWn9DoEVhVDxEoL5",
+
+            videoSekitar: "https://youtu.be/9JP3k5zKp8M?si=jRuR8WUketsLkxRZ",
           },
 
           {
@@ -1916,6 +1938,8 @@
             contoh: "",
 
             video: "https://youtu.be/X3b1CPQhC-I?si=ig6gpl9dntbDi-WF",
+
+            videoSekitar: "https://youtu.be/K4--N1yOzig?si=DSVyPcSG2uJq33CU",
           },
 
           {
@@ -1941,6 +1965,8 @@
             contoh: "",
 
             video: "https://youtu.be/lr6CvGXnFks?si=3-C5xIorXXkpKXdX",
+
+            videoSekitar: "https://youtube.com/shorts/ic7_ZAU9kik?si=MOUD2REZrJoe7EKn",
           },
 
           {
@@ -1967,6 +1993,8 @@
             contoh: "",
 
             video: "https://youtu.be/LseuzsFGxSM?si=4OPgH6ljtnwDCiCS",
+
+            videoSekitar: "https://youtube.com/shorts/7hImoA6XR4Y?si=ygx22ipLonDgqgUr",
           },
         ],
 
@@ -1991,6 +2019,8 @@
             contoh: "",
 
             video: "https://youtu.be/oLd4dK-J0HQ?si=cPxABaLf3EuXNjuW",
+
+            videoSekitar: "https://youtu.be/OcYImwefIAg?si=MGLAHb-lsVhtJuTv",
           },
 
           {
@@ -2013,6 +2043,8 @@
             contoh: "",
 
             video: "https://youtu.be/aOLksHHesFA?si=3t6ZWLu6LWeyrY1i",
+
+            videoSekitar: "https://youtube.com/shorts/nt_zDUOhTdo?si=qToLTELWFqKqmgOk",
           },
 
           {
@@ -2036,6 +2068,8 @@
             contoh: "",
 
             video: "https://youtu.be/xDQrGb0_FCg?si=jHLRVMF43bF4vrKE",
+
+            videoSekitar: "https://youtube.com/shorts/gmkey7pISIo?si=LccV4SKz7ishj22h",
           },
 
           {
@@ -2058,6 +2092,8 @@
             contoh: "",
 
             video: "https://youtu.be/4sVX0DHYJRI?si=gh45QV8Wzkm-HzQk",
+
+            videoSekitar: "https://youtu.be/46FLr6BSUFQ?si=7FuA891mes0uyC0u",
           },
         ],
       };
@@ -2522,7 +2558,7 @@
           materi <strong>${item.nama}</strong>?
         </p>
 
-        <div class="learning-options">
+        <div class="learning-options three-options">
 
           <button
             type="button"
@@ -2558,8 +2594,46 @@
             </p>
           </button>
 
+          <button
+            type="button"
+            class="learning-option"
+            onclick="tontonVideoSekitarAktif()"
+          >
+            <span class="option-icon">
+              🌎
+            </span>
+
+            <h3 id="judulVideoSekitarPilihan">
+              Video Sekitar Kita
+            </h3>
+
+            <p id="deskripsiVideoSekitarPilihan">
+              Lihat contoh kenampakan di sekitar kita.
+            </p>
+          </button>
+
         </div>
       `;
+
+        const judulVideoSekitar = document.getElementById(
+          "judulVideoSekitarPilihan",
+        );
+
+        const deskripsiVideoSekitar = document.getElementById(
+          "deskripsiVideoSekitarPilihan",
+        );
+
+        if (judulVideoSekitar && deskripsiVideoSekitar) {
+          if (jenis === "alam") {
+            judulVideoSekitar.textContent = "Kenampakan Alam di Sekitar Kita";
+            deskripsiVideoSekitar.textContent =
+              "Lihat contoh kenampakan alam yang ada di sekitar kita.";
+          } else {
+            judulVideoSekitar.textContent = "Kenampakan Buatan di Sekitar Kita";
+            deskripsiVideoSekitar.textContent =
+              "Lihat contoh kenampakan buatan yang ada di sekitar kita.";
+          }
+        }
 
         document.getElementById("materialModal").classList.add("open");
 
@@ -2710,6 +2784,55 @@
             Tonton video tentang
             <strong>${item.nama}</strong>
             berikut ini.
+          </p>
+
+          <div class="video-wrapper">
+            ${iframeYoutube}
+          </div>
+
+          <button
+            type="button"
+            class="back-choice-button"
+            onclick="kembaliKePilihan()"
+          >
+            ← Pilih Cara Belajar Lain
+          </button>
+
+        </div>
+      `;
+      }
+
+      function tontonVideoSekitarAktif() {
+        if (!materiModalAktif) {
+          return;
+        }
+
+        tandaiMateriDipelajari();
+        hentikanVideoYoutube();
+
+        const item = cariMateri(
+          materiModalAktif.jenis,
+          materiModalAktif.id
+        );
+
+        const judulBox =
+          materiModalAktif.jenis === "alam"
+            ? "Kenampakan Alam di Sekitar Kita"
+            : "Kenampakan Buatan di Sekitar Kita";
+
+        const iframeYoutube =
+          buatIframeYoutube(
+            item.videoSekitar,
+            judulBox + " " + item.nama
+          );
+
+        document.getElementById(
+          "materialModalBody"
+        ).innerHTML = `
+        <div class="video-content">
+
+          <p>
+            <strong>${judulBox}</strong>
           </p>
 
           <div class="video-wrapper">
